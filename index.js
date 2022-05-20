@@ -10,6 +10,24 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: "unauthorized access" });
+    }
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: "Forbidden access" });
+        }
+        //console.log("decoded", decoded);
+        req.decoded = decoded;
+        next();
+    });
+    //console.log("inside verifyJWT", authHeader);
+}
+
+
 //app is running or not check in browser
 
 app.get("/", (req, res) => {
@@ -193,6 +211,19 @@ async function run() {
             const newProduct = req.body;
             const result = groseryCollection.insertOne(newProduct);
             res.send(result);
+        });
+
+        app.get("/addedProducts/:email", verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const decodedEmail = req.decoded.email;
+            if (email === decodedEmail) {
+                const query = { email: email };
+                const cursor = groseryCollection.find(query);
+                const result = await cursor.toArray();
+                res.send(result);
+            } else {
+                res.status(403).send({ message: "forbbiden access" });
+            }
         });
 
     } finally {
