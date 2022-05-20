@@ -73,6 +73,74 @@ async function run() {
             res.send(products);
         });
 
+        //get one item data
+        app.get("/products/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await groseryCollection.findOne(query);
+
+            res.send(result);
+        });
+        
+        //update one item data
+
+        app.put("/products/:id", async (req, res) => {
+            const id = req.params.id;
+            const updateProduct = req.body;
+
+            const query = { _id: ObjectId(id) };
+            const option = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    quantity: updateProduct.quantity,
+                },
+            };
+            const result = await groseryCollection.updateOne(
+                query,
+                updateDoc,
+                option
+            );
+            res.send(result);
+        });
+
+        //sell item update
+
+        app.put("/sellProducts", async (req, res) => {
+            //const id = req.params.id;
+            const updateProduct = req.body;
+            const query = { productId: updateProduct.productId };
+            const option = { upsert: true };
+            const result = await sellCollection.findOne(query);
+            let updateDoc;
+            if (result) {
+                updateDoc = {
+                    $set: {
+                        productId: updateProduct.productId,
+                        productName: updateProduct.productName,
+                        quantity:
+                            parseInt(result.quantity) +
+                            parseInt(updateProduct.quantity),
+                        deliverUser: updateProduct.deliverUser,
+                    },
+                };
+            } else {
+                updateDoc = {
+                    $set: {
+                        productId: updateProduct.productId,
+                        productName: updateProduct.productName,
+                        quantity: parseInt(updateProduct.quantity),
+                        deliverUser: updateProduct.deliverUser,
+                    },
+                };
+            }
+            const resultSend = await sellCollection.updateOne(
+                query,
+                updateDoc,
+                option
+            );
+            res.send(resultSend);
+        });
+
     } finally {
 
     }
