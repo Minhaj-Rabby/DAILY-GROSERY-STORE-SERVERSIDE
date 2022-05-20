@@ -178,6 +178,23 @@ async function run() {
             res.send(products);
         });
 
+        //delete on item api
+
+        app.delete("/products/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await groseryCollection.deleteOne(query);
+            res.send(result);
+        });
+
+        // add one item api
+
+        app.post("/products", async (req, res) => {
+            const newProduct = req.body;
+            const result = groseryCollection.insertOne(newProduct);
+            res.send(result);
+        });
+
     } finally {
 
     }
