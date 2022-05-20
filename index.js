@@ -141,6 +141,43 @@ async function run() {
             res.send(resultSend);
         });
 
+        //sold post api
+
+        app.post("/soldProducts", async (req, res) => {
+            const newProduct = req.body;
+            const result = soldCollection.insertOne(newProduct);
+
+            res.send(result);
+        });
+
+        //sold get api
+
+        app.get("/soldProducts", async (req, res) => {
+            const query = {};
+            const cursor = soldCollection.find(query);
+            const products = await cursor.toArray();
+
+            res.send(products);
+        });
+
+        //sold one item delete
+
+        app.delete("/soldProducts/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await soldCollection.deleteOne(query);
+            res.send(result);
+        });
+
+        //sell get result
+
+        app.get("/sellProducts", async (req, res) => {
+            const query = {};
+            const cursor = sellCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        });
+
     } finally {
 
     }
