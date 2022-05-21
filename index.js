@@ -20,11 +20,10 @@ function verifyJWT(req, res, next) {
         if (err) {
             return res.status(403).send({ message: "Forbidden access" });
         }
-        //console.log("decoded", decoded);
+       
         req.decoded = decoded;
         next();
     });
-    //console.log("inside verifyJWT", authHeader);
 }
 
 
