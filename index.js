@@ -41,7 +41,7 @@ app.listen(port, () => {
 
 //uri and client create
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.okup2.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0-shard-00-00.okup2.mongodb.net:27017,cluster0-shard-00-01.okup2.mongodb.net:27017,cluster0-shard-00-02.okup2.mongodb.net:27017/?ssl=true&replicaSet=atlas-aw0kzp-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
